@@ -1,0 +1,98 @@
+version: '3.5'
+services:
+  mysql:
+    image: mysql:5.7
+    platform: linux/x86_64
+    container_name: tripple-mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=10a10a
+    command:
+      - --character-set-server=utf8mb4 
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - tripple-net
+
+  auth-service:
+    image: tripple/auth-service
+    build:
+      context: ./auth-service
+      dockerfile: ./Dockerfile
+    container_name: tripple-auth-service
+    expose:
+      - "6100"
+    ports:
+      - "6100:6100"
+    depends_on:
+      - mysql
+    networks:
+      - tripple-net
+
+  place-service:
+    image: tripple/place-service
+    build:
+      context: ./place-service
+      dockerfile: ./Dockerfile
+    container_name: tripple-place-service
+    expose:
+      - "6200"
+    ports:
+      - "6200:6200"
+    depends_on:
+      - mysql
+    networks:
+      - tripple-net
+
+  review-service:
+    image: tripple/review-service
+    build:
+      context: ./review-service
+      dockerfile: ./Dockerfile
+    container_name: tripple-review-service
+    expose:
+      - "6300"
+    ports:
+      - "6300:6300"
+    depends_on:
+      - mysql
+    networks:
+      - tripple-net
+
+  point-service:
+    image: tripple/point-service
+    build:
+      context: ./point-service
+      dockerfile: ./Dockerfile
+    container_name: tripple-point-service
+    expose:
+      - "6400"
+    ports:
+      - "6400:6400"
+    depends_on:
+      - mysql
+    networks:
+      - tripple-net
+
+  api-gateway:
+    image: nginx:latest
+    volumes:
+      - ./api-gateway/nginx.conf:/etc/nginx/nginx.conf
+    container_name: tripple-api-gateway
+    expose: 
+      - "6900"
+    ports: 
+      - "6900:6900"
+    depends_on:
+      - auth-service
+      - place-service
+      - review-service
+      - point-service
+    networks:
+      - tripple-net
+
+networks:
+  tripple-net:
