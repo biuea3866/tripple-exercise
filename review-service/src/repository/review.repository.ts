@@ -12,20 +12,18 @@ class ReviewRepository {
         const connection: PoolConnection = await mysql.getConnection();
 
         try {
-            var SQL: string = "SELECT r.content, " +
-                              "       r.user_id AS userId, "  +
-                              "       r.review_id AS reviewId, " +
-                              "       p.image " +
-                              "from reviews r, photos p " +
-                              "WHERE r.place_id = ?";
+            const SQL: string = "SELECT r.content, " +
+                                "       r.user_id AS userId, "  +
+                                "       r.review_id AS reviewId, " +
+                                "       p.image " +
+                                "from reviews r, photos p " +
+                                "WHERE r.place_id = ?";
             
             await connection.beginTransaction();
 
             const [results, rows]: any = await connection.query(SQL, PARAMS);
 
             await connection.commit();
-
-            logger.info(results);
 
             const payload: [] = results.reduce((accumulator, current) => {
                 if(accumulator.length === 0) {
@@ -290,38 +288,75 @@ class ReviewRepository {
         const connection: PoolConnection = await mysql.getConnection();
 
         try {
-            var payload: any;
-            var SQL: string = "SELECT content " +
-                              "FROM reviews " +
-                              "WHERE review_id = ? ";
+            const SQL: string = "SELECT r.content, " +
+                                "       p.image, " +
+                                "       p.photo_id AS photoId, "+
+                                "       p.review_id AS reviewId, " +
+                                "       p.id " +
+                                "from reviews r, photos p " +
+                                "WHERE r.review_id = ?";
+            
+            await connection.beginTransaction();
+
+            const [results, rows]: any = await connection.query(SQL, PARAMS);
+
+            await connection.commit();
+
+            const payload: {} = results.reduce((accumulator, current) => {
+                logger.info(JSON.stringify(accumulator));
+
+                const photo = {
+                    image: current.image,
+                    photoId: current.photoId,
+                    reviewId: current.reviewId,
+                    id: current.id
+                };
+
+                accumulator.photos.push(photo);
+                
+                return accumulator;
+            }, {
+                'content': results[0].content,
+                'photos': [{
+                    image: results[0].image,
+                    photoId: results[0].photoId,
+                    reviewId: results[0].reviewId,
+                    id: results[0].id
+                }]
+            });
+
+            // var payload: any;
+            // var SQL: string = "SELECT content " +
+            //                   "FROM reviews " +
+            //                   "WHERE review_id = ? ";
                                 
-            await connection.beginTransaction();
+            // await connection.beginTransaction();
 
-            var [results, rows]: any = await connection.query(SQL, PARAMS);
+            // var [results, rows]: any = await connection.query(SQL, PARAMS);
 
-            await connection.commit();
+            // await connection.commit();
             
-            payload = {
-                content: results[0]
-            };
+            // payload = {
+            //     content: results[0]
+            // };
 
-            SQL = "SELECT photo_id AS photoId, " +
-                  "       review_id AS reviewId, " +
-                  "       image, " +
-                  "       id " +
-                  "FROM photos " +
-                  "WHERE review_id = ?";
+            // SQL = "SELECT photo_id AS photoId, " +
+            //       "       review_id AS reviewId, " +
+            //       "       image, " +
+            //       "       id " +
+            //       "FROM photos " +
+            //       "WHERE review_id = ?";
 
-            await connection.beginTransaction();
+            // await connection.beginTransaction();
 
-            [results, rows] = await connection.query(SQL, PARAMS);
+            // [results, rows] = await connection.query(SQL, PARAMS);
             
-            await connection.commit();
+            // await connection.commit();
 
-            payload = {
-                ...payload.content,
-                photos: results
-            };
+            // payload = {
+            //     ...payload.content,
+            //     photos: results
+            // };
 
             return {
                 code: CHECK_REVIEW,

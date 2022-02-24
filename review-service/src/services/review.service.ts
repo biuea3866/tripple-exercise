@@ -234,6 +234,7 @@ class ReviewService {
             // 글, 사진 데이터 조회
             const checkReviewResponse: ResponseDto = await this.repository.checkReview([reviewId]);
 
+            logger.info("checkReviewResponse: " + JSON.stringify(checkReviewResponse));
             if(checkReviewResponse.payload.content === content && JSON.stringify(checkReviewResponse.payload.photos.map(photo => photo.image)) === JSON.stringify(attachedPhotos)) {
                 return {
                     code: SUCCESS_MODIFY_REVIEW,
