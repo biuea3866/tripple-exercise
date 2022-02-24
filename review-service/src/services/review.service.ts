@@ -405,13 +405,10 @@ class ReviewService {
             // 포인트 증감이 없을 경우 결과값 반환 및 커밋
             else if(basicPoint === 0) {
                 logger.info("포인트 증감 없음, 결과값 및 데이터 커밋: " + JSON.stringify(columnsForApproving));
-                logger.info(columnsForApproving);
                 if(columnsForApproving.content) {
                     const PARAMS = [columnsForApproving.content, 
                                     STATUS.APPROVED,
                                     reviewId];
-                    
-                    logger.info(PARAMS);
 
                     const commitResponse: ResponseDto = await this.repository.modifyContentByReviewId(PARAMS);
 
@@ -461,12 +458,15 @@ class ReviewService {
             if(responseMessage.step === STEP_FORWARD) {
                 logger.info("포인트 증감 트랜잭션 정상 수행: " + JSON.stringify(responseMessage));
                 // 결과값 반환 및 데이터 커밋
+                logger.info(columnsForApproving);
                 if(columnsForApproving.content) {
                     const PARAMS = [columnsForApproving.content, 
                                     STATUS.APPROVED,
                                     reviewId];
 
-                    await this.repository.modifyContentByReviewId(PARAMS);
+                    const commitResponse: ResponseDto = await this.repository.modifyContentByReviewId(PARAMS);
+
+                    logger.info("content commit:" + JSON.stringify(commitResponse));
                 }
                 
                 if(columnsForApproving.allRemovePhoto) {
@@ -479,7 +479,9 @@ class ReviewService {
                     columnsForApproving.removePhotos.map(async photoId => {
                         const PARAMS = [photoId];
 
-                        await this.repository.deletePhotoByPhotoId(PARAMS);
+                        const commitResponse: ResponseDto = await this.repository.deletePhotoByPhotoId(PARAMS);
+
+                        logger.info("removePhotos commit:" + JSON.stringify(commitResponse));
                     });
                 }
 
@@ -487,7 +489,9 @@ class ReviewService {
                     columnsForApproving.addPhotos.map(async addPhoto => {
                         const PARAMS = [...addPhoto];
 
-                        await this.repository.savePhoto(PARAMS);
+                        const commitResponse: ResponseDto = await this.repository.savePhoto(PARAMS);
+
+                        logger.info("addPhotos commit:" + JSON.stringify(commitResponse));
                     });
                 }
 
