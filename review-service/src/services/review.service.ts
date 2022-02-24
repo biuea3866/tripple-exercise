@@ -404,7 +404,7 @@ class ReviewService {
             else if(basicPoint < 0) Choreographer.decreasePointEvent.publishToQueue(eventMessage);
             // 포인트 증감이 없을 경우 결과값 반환 및 커밋
             else if(basicPoint === 0) {
-                logger.info("포인트 증감 없음, 결과값 및 데아터 커밋: " + JSON.stringify(columnsForApproving));
+                logger.info("포인트 증감 없음, 결과값 및 데이터 커밋: " + JSON.stringify(columnsForApproving));
                 if(columnsForApproving.content) {
                     const PARAMS = [columnsForApproving.content, 
                                     STATUS.APPROVED,
