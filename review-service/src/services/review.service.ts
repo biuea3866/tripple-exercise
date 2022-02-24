@@ -65,7 +65,7 @@ class ReviewService {
                 reviewId: null
             };
             // 해당 사용자의 리뷰가 특정 장소에 있는지
-            const isExist: ResponseDto = await this.repository.isExistReview([userId]);
+            const isExist: ResponseDto = await this.repository.isExistReview([userId, STATUS.APPROVED]);
             logger.info("isExist " + JSON.stringify(isExist));
             if(isExist.code === IS_EXIST_REVIEW) {
                 return {
@@ -407,6 +407,7 @@ class ReviewService {
                 logger.info("포인트 증감 없음, 결과값 및 데아터 커밋: " + JSON.stringify(columnsForApproving));
                 if(columnsForApproving.content) {
                     const PARAMS = [columnsForApproving.content, 
+                                    STATUS.APPROVED,
                                     reviewId];
 
                     await this.repository.modifyContentByReviewId(PARAMS);
@@ -451,6 +452,7 @@ class ReviewService {
                 // 결과값 반환 및 데이터 커밋
                 if(columnsForApproving.content) {
                     const PARAMS = [columnsForApproving.content, 
+                                    STATUS.APPROVED,
                                     reviewId];
 
                     await this.repository.modifyContentByReviewId(PARAMS);
