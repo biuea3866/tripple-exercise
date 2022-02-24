@@ -21,7 +21,7 @@ class ReviewController {
             const placeId: string = request.params.placeId;
             const result: ResponseDto = await this.service.getReviews(placeId);
 
-            if(result.code === (BAD_GATEWAY || FAILURE_GET_REVIEWS)) {
+            if(result.code === BAD_GATEWAY || result.code === FAILURE_GET_REVIEWS) {
                 return response.status(BAD_GATEWAY)
                                .json(result.message);
             }
@@ -42,7 +42,7 @@ class ReviewController {
             const dto: SaveReviewDto = request.body;
             const result: ResponseDto = await this.service.saveReview(dto);
     
-            if(result.code === (BAD_GATEWAY || FAILURE_SAVE_REVIEW)) {
+            if(result.code === BAD_GATEWAY || result.code === FAILURE_SAVE_REVIEW) {
                 return response.status(BAD_GATEWAY)
                                .json(result.message);
             }
@@ -69,7 +69,7 @@ class ReviewController {
             };
             const result: ResponseDto = await this.service.modifyReview(modifyReviewDto);
 
-            if(result.code === (BAD_GATEWAY || FAILURE_MODIFY_REVIEW)) {
+            if(result.code === BAD_GATEWAY || result.code === FAILURE_MODIFY_REVIEW) {
                 return response.status(BAD_GATEWAY)
                                .json(result.message);
             }
@@ -95,7 +95,7 @@ class ReviewController {
 
             const result: ResponseDto = await this.service.deleteReview(deleteReviewDto);
 
-            if(result.code === (BAD_GATEWAY || FAILURE_DELETE_REVIEW)) {
+            if(result.code === BAD_GATEWAY || result.code === FAILURE_DELETE_REVIEW) {
                 return response.status(BAD_GATEWAY)
                                .json(result.message);
             }

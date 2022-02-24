@@ -23,7 +23,7 @@ class PointService {
             const PARAMS: string[] = [userId];
             const response: ResponseDto = await this.repository.getPoints(PARAMS);
 
-            if(response.code === (FAILURE_GET_POINTS || DATABASE_ERROR)) {
+            if(response.code === FAILURE_GET_POINTS || response.code === DATABASE_ERROR) {
                 return {
                     code: response.code,
                     message: response.message,
@@ -53,7 +53,7 @@ class PointService {
             const PARAMS: string[] = [userId];
             const response: ResponseDto = await this.repository.getHistory(PARAMS);
 
-            if(response.code === (FAILURE_GET_HISTORY || DATABASE_ERROR)) {
+            if(response.code === FAILURE_GET_HISTORY || response.code === DATABASE_ERROR) {
                 return {
                     code: response.code,
                     message: response.message,
@@ -99,7 +99,7 @@ class PointService {
 
             logger.info("increasePointResponse " + JSON.stringify(response));
             // 포인트 증가 에러
-            if(response.code === (FAILURE_INCREASE_POINT || DATABASE_ERROR)) {
+            if(response.code === FAILURE_INCREASE_POINT || response.code === DATABASE_ERROR) {
                 logger.info("increasePointError " + JSON.stringify(response));
                 // 롤백 - 포인트 감소
                 const decreasePointDto: DecreasePointDto = {
@@ -223,7 +223,7 @@ class PointService {
             const response: ResponseDto = await this.repository.decreasePoint(PARAMS);
 
             // 포인트 감소 에러
-            if(response.code === (FAILURE_DECREASE_POINT || DATABASE_ERROR)) {
+            if(response.code === FAILURE_DECREASE_POINT || response.code === DATABASE_ERROR) {
                 // 보상 트랜잭션
                 const increasePointDto: IncreasePointDto = {
                     userId,
