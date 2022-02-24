@@ -458,7 +458,7 @@ class ReviewService {
             if(responseMessage.step === STEP_FORWARD) {
                 logger.info("포인트 증감 트랜잭션 정상 수행: " + JSON.stringify(responseMessage));
                 // 결과값 반환 및 데이터 커밋
-                logger.info(columnsForApproving);
+                logger.info(JSON.stringify(columnsForApproving));
                 if(columnsForApproving.content) {
                     const PARAMS = [columnsForApproving.content, 
                                     STATUS.APPROVED,
@@ -472,7 +472,9 @@ class ReviewService {
                 if(columnsForApproving.allRemovePhoto) {
                     const PARAMS = [reviewId];
 
-                    await this.repository.deleteAllPhotosByReviewId(PARAMS);
+                    const commitResponse: ResponseDto = await this.repository.deleteAllPhotosByReviewId(PARAMS);
+                    
+                    logger.info("allRemovePhotos commit: " + JSON.stringify(commitResponse));
                 }
 
                 if(columnsForApproving.removePhotos.length > 0) {
