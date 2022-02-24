@@ -11,8 +11,8 @@
 4. docker exec -it tripple/mysql /bin/sh
 5. mysql –u root –p (비밀번호 10a10a)
 (docker 컨테이너 실행 시 init.sql이 실행 되어 유저 데이터와 장소 데이터가 자동 생성됩니다!) 
-6. select * from users
-   select * from places
+6. select * from users 
+   / select * from places
 7. 조회한 user_id와 place_id로 API 요청 수행
 
 
