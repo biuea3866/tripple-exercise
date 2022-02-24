@@ -338,7 +338,7 @@ class ReviewRepository {
 
         try {
             const SQL: string = "UPDATE reviews " +
-                                "SET status =  ? " +
+                                "SET status = ? " +
                                 "WHERE review_id = ?";
             
             await connection.beginTransaction();
@@ -473,7 +473,7 @@ class ReviewRepository {
                                 "SET content =  ?, " +
                                 "    status = ? " +
                                 "WHERE review_id = ?";
-            
+                                
             await connection.beginTransaction();
 
             const [results, rows]: any = await connection.query(SQL, PARAMS);

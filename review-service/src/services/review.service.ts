@@ -225,7 +225,7 @@ class ReviewService {
 
         try {
             // 롤백, 커밋을 위한 데이터
-            const columnsForApproving = {
+            var columnsForApproving = {
                 content: null,
                 allRemovePhoto: null,
                 addPhotos: [],
@@ -410,20 +410,26 @@ class ReviewService {
                                     STATUS.APPROVED,
                                     reviewId];
 
-                    await this.repository.modifyContentByReviewId(PARAMS);
+                    const commitResponse: ResponseDto = await this.repository.modifyContentByReviewId(PARAMS);
+
+                    logger.info("content commit:" + JSON.stringify(commitResponse))
                 }
                 
                 if(columnsForApproving.allRemovePhoto) {
                     const PARAMS = [reviewId];
 
-                    await this.repository.deleteAllPhotosByReviewId(PARAMS);
+                    const commitResponse: ResponseDto = await this.repository.deleteAllPhotosByReviewId(PARAMS);
+
+                    logger.info("content commit:" + JSON.stringify(commitResponse))
                 }
 
                 if(columnsForApproving.removePhotos.length > 0) {
                     columnsForApproving.removePhotos.map(async photoId => {
                         const PARAMS = [photoId];
 
-                        await this.repository.deletePhotoByPhotoId(PARAMS);
+                        const commitResponse: ResponseDto = await this.repository.deletePhotoByPhotoId(PARAMS);
+
+                        logger.info("content commit:" + JSON.stringify(commitResponse))
                     });
                 }
 
@@ -431,7 +437,9 @@ class ReviewService {
                     columnsForApproving.addPhotos.map(async addPhoto => {
                         const PARAMS = [...addPhoto];
 
-                        await this.repository.savePhoto(PARAMS);
+                        const commitResponse: ResponseDto = await this.repository.savePhoto(PARAMS);
+
+                        logger.info("content commit:" + JSON.stringify(commitResponse))
                     });
                 }
 
