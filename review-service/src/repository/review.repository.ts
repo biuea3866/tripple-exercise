@@ -288,43 +288,35 @@ class ReviewRepository {
         const connection: PoolConnection = await mysql.getConnection();
 
         try {
-            const SQL: string = "SELECT r.content, " +
-                                "       p.image, " +
-                                "       p.photo_id AS photoId, "+
-                                "       p.review_id AS reviewId, " +
-                                "       p.id " +
-                                "from reviews r, photos p " +
-                                "WHERE r.review_id = ?";
+            var SQL: string = "SELECT content " +
+                              "FROM reviews " +
+                              "WHERE review_id = ?";
             
             await connection.beginTransaction();
 
-            const [results, rows]: any = await connection.query(SQL, PARAMS);
+            var [results, rows]: any = await connection.query(SQL, PARAMS);
 
             await connection.commit();
 
-            const payload: {} = results.reduce((accumulator, current) => {
-                logger.info(JSON.stringify(accumulator));
+            var payload: {} = {
+                content: results[0].content
+            };
 
-                const photo = {
-                    image: current.image,
-                    photoId: current.photoId,
-                    reviewId: current.reviewId,
-                    id: current.id
-                };
+            SQL = "SELECT photo_id AS photoId, " +
+                  "       image, " +
+                  "       id " +
+                  "FROM photos " +
+                  "WHERE review_id = ?";
+            
+            [results, rows] = await connection.query(SQL, PARAMS);
 
-                accumulator.photos.push(photo);
-                
-                return accumulator;
-            }, {
-                'content': results[0].content,
-                'photos': [{
-                    image: results[0].image,
-                    photoId: results[0].photoId,
-                    reviewId: results[0].reviewId,
-                    id: results[0].id
-                }]
-            });
+            await connection.commit();
 
+            payload = {
+                ...payload,
+                photos: results
+            };
+            
             return {
                 code: CHECK_REVIEW,
                 message: "리뷰 데이터를 조회했습니다!",
@@ -478,7 +470,8 @@ class ReviewRepository {
 
         try {
             const SQL: string = "UPDATE reviews " +
-                                "SET content =  ? " +
+                                "SET content =  ?, " +
+                                "    status = ?" +
                                 "WHERE review_id = ?";
             
             await connection.beginTransaction();
@@ -623,16 +616,16 @@ class ReviewRepository {
 
             await connection.commit();
 
-            await connection.beginTransaction();
-
             SQL = "DELETE " +
-                  "FROM reviews " +
+                  "FROM photos " +
                   "WHERE review_id = ?";
+
+            await connection.beginTransaction();
 
             [results, rows] = await connection.query(SQL, PARAMS);
 
             await connection.commit();
-            
+
             return {
                 code: SUCCESS_DELETE_REVIEW,
                 message: "리뷰 삭제 성공!",
