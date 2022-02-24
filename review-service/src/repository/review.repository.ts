@@ -325,39 +325,6 @@ class ReviewRepository {
                 }]
             });
 
-            // var payload: any;
-            // var SQL: string = "SELECT content " +
-            //                   "FROM reviews " +
-            //                   "WHERE review_id = ? ";
-                                
-            // await connection.beginTransaction();
-
-            // var [results, rows]: any = await connection.query(SQL, PARAMS);
-
-            // await connection.commit();
-            
-            // payload = {
-            //     content: results[0]
-            // };
-
-            // SQL = "SELECT photo_id AS photoId, " +
-            //       "       review_id AS reviewId, " +
-            //       "       image, " +
-            //       "       id " +
-            //       "FROM photos " +
-            //       "WHERE review_id = ?";
-
-            // await connection.beginTransaction();
-
-            // [results, rows] = await connection.query(SQL, PARAMS);
-            
-            // await connection.commit();
-
-            // payload = {
-            //     ...payload.content,
-            //     photos: results
-            // };
-
             return {
                 code: CHECK_REVIEW,
                 message: "리뷰 데이터를 조회했습니다!",
@@ -636,13 +603,13 @@ class ReviewRepository {
         const connection: PoolConnection = await mysql.getConnection();
 
         try {
-            const SQL: string = "DELETE " +
-                                "FROM reviews " +
-                                "WHERE review_id = ?";
+            var SQL: string = "DELETE " +
+                              "FROM reviews " +
+                              "WHERE review_id = ?";
 
             await connection.beginTransaction();
 
-            const [results, rows]: any = await connection.query(SQL, PARAMS);
+            var [results, rows]: any = await connection.query(SQL, PARAMS);
 
             if(results.affectedRows as number < 1) {
                 await connection.rollback();
@@ -656,6 +623,16 @@ class ReviewRepository {
 
             await connection.commit();
 
+            await connection.beginTransaction();
+
+            SQL = "DELETE " +
+                  "FROM reviews " +
+                  "WHERE review_id = ?";
+
+            [results, rows] = await connection.query(SQL, PARAMS);
+
+            await connection.commit();
+            
             return {
                 code: SUCCESS_DELETE_REVIEW,
                 message: "리뷰 삭제 성공!",
