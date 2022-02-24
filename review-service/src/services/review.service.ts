@@ -459,7 +459,7 @@ class ReviewService {
                 logger.info("포인트 증감 트랜잭션 정상 수행: " + JSON.stringify(responseMessage));
                 // 결과값 반환 및 데이터 커밋
                 logger.info(JSON.stringify(columnsForApproving));
-                if(columnsForApproving.content) {
+                if(columnsForApproving.content === "") {
                     const PARAMS = [columnsForApproving.content, 
                                     STATUS.APPROVED,
                                     reviewId];
