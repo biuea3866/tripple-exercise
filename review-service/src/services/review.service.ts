@@ -1,4 +1,4 @@
-import { BAD_GATEWAY, DATABASE_ERROR, FAILURE_DELETE_REVIEW, FAILURE_GET_REVIEWS, FAILURE_GET_REVIEW_BY_INDEX, FAILURE_MODIFY_REVIEW, FAILURE_SAVE_REVIEW, IS_EXIST_REVIEW, IS_FIRST_REVIEW, STEP_FORWARD, SUCCESS_DELETE_REVIEW, SUCCESS_GET_REVIEW_BY_INDEX, SUCCESS_MODIFY_REVIEW, SUCCESS_SAVE_REVIEW } from "../constants/result.code";
+import { BAD_GATEWAY, DATABASE_ERROR, FAILURE_DELETE_REVIEW, FAILURE_GET_REVIEW_BY_INDEX, FAILURE_MODIFY_REVIEW, FAILURE_SAVE_REVIEW, IS_EXIST_REVIEW, IS_FIRST_REVIEW, STEP_FORWARD, SUCCESS_DELETE_REVIEW, SUCCESS_MODIFY_REVIEW, SUCCESS_SAVE_REVIEW } from "../constants/result.code";
 import { EventMessage } from "../interface/event.message.interface";
 import { ResponseDto } from "../interface/response.dto";
 import { SaveReviewDto } from "../interface/save.review.dto";
@@ -404,7 +404,7 @@ class ReviewService {
             else if(basicPoint < 0) Choreographer.decreasePointEvent.publishToQueue(eventMessage);
             // 포인트 증감이 없을 경우 결과값 반환 및 커밋
             else if(basicPoint === 0) {
-                logger.info("basicPoint = 0, 결과값 및 커밋 데이터: " + JSON.stringify(columnsForApproving));
+                logger.info("포인트 증감 없음, 결과값 및 데아터 커밋: " + JSON.stringify(columnsForApproving));
                 if(columnsForApproving.content) {
                     const PARAMS = [columnsForApproving.content, 
                                     reviewId];
@@ -519,7 +519,7 @@ class ReviewService {
         } catch(e) {
             return {
                 code: BAD_GATEWAY,
-                message: e,
+                message: JSON.stringify(e),
                 payload: null
             };
         }

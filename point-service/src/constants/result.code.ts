@@ -1,4 +1,4 @@
-// review-service 내 응답 코드
+// point-service 내 응답 코드
 const SUCCESS_INCREASE_POINT: number = 3001;
 const FAILURE_INCREASE_POINT: number = 3002;
 const SUCCESS_DECREASE_POINT: number = 3003;
